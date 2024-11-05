@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Copilot - Prosty Przewodnik</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        .search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .checkbox {
+            width: 18px;
+            height: 18px;
+        }
+        #outlook { background: #0078d4; }
+        #word { background: #185abd; }
+        #powerpoint { background: #d83b01; }
+        #teams { background: #464EB8; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; margin-bottom: 30px;">Microsoft Copilot - Przewodnik</h1>
+    
+    <input type="text" id="searchInput" placeholder="Szukaj funkcji..." class="search">
+    
+    <div class="tabs">
+        <button class="tab" id="outlook" onclick="showContent('outlook')">Outlook</button>
+        <button class="tab" id="word" onclick="showContent('word')">Word</button>
+        <button class="tab" id="powerpoint" onclick="showContent('powerpoint')">PowerPoint</button>
+        <button class="tab" id="teams" onclick="showContent('teams')">Teams</button>
+    </div>
+    
+    <div id="content"></div>
+
+    <script>
+        const data = {
+            outlook: [
+                {
+                    title: 'Tworzenie nowej wiadomości',
+                    steps: [
+                        'Kliknij "Nowa wiadomość"',
+                        'Wybierz ikonę Copilot',
+                        'Wpisz polecenie',
+                        'Wybierz długość i ton',
+                        'Edytuj i wyślij'
+                    ]
+                },
+                {
+                    title: 'Podsumowanie wątku',
+                    steps: [
+                        'Otwórz wątek',
+                        'Kliknij "Podsumuj z Copilotem"',
+                        'Przejrzyj podsumowanie'
+                    ]
+                }
+            ],
+            word: [
+                {
+                    title: 'Generowanie tekstu',
+                    steps: [
+                        'Kliknij ikonę Copilot',
+                        'Wpisz polecenie',
+                        'Przejrzyj i wstaw tekst'
+                    ]
+                },
+                {
+                    title: 'Edycja tekstu',
+                    steps: [
+                        'Zaznacz tekst',
+                        'Użyj Copilot do edycji',
+                        'Zatwierdź zmiany'
+                    ]
+                }
+            ],
+            powerpoint: [
+                {
+                    title: 'Tworzenie prezentacji',
+                    steps: [
+                        'Kliknij ikonę Copilot',
+                        'Opisz temat prezentacji',
+                        'Wybierz układ',
+                        'Edytuj zawartość'
+                    ]
+                }
+            ],
+            teams: [
+                {
+                    title: 'Podczas spotkania',
+                    steps: [
+                        'Włącz Copilot',
+                        'Wybierz rodzaj pomocy',
+                        'Przejrzyj notatki'
+                    ]
+                }
+            ]
+        };
+
+        function showContent(app) {
+            const content = document.getElementById('content');
+            content.innerHTML = data[app].map(item => `
+                <div class="card">
+                    <div class="title">${item.title}</div>
+                    ${item.steps.map(step => `
+                        <div class="step">
+                            <input type="checkbox" class="checkbox">
+                            <span>${step}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            // Zapisz stan checkboxów
+            const checkboxes = document.querySelectorAll('.checkbox');
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = localStorage.getItem(`${app}-${index}`) === 'true';
+                checkbox.addEventListener('change', () => {
+                    localStorage.setItem(`${app}-${index}`, checkbox.checked);
+                });
+            });
+        }
+
+        // Wyszukiwarka
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchText = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(searchText) ? 'block' : 'none';
+            });
+        });
+
+        // Pokaż Outlook na start
+        showContent('outlook');
+    </script>
+</body>
+</html>
